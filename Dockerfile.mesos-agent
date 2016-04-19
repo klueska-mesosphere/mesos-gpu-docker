@@ -1,0 +1,29 @@
+FROM mesos-update
+MAINTAINER Kevin Klues <klueska@mesosphere.com>
+
+# Calling 'nvidia-docker run' will perform something
+# equivalent to the following when it sees this label
+# in the image:
+# --privileged \
+# -v nvidia_driver_<driver_version>:/usr/local/nvidia:ro \
+# -v /dev/nvidiactl:/dev/nvidiactl \
+# -v /dev/nvidia-uvm:/dev/nvidia-uvm \
+# -v /dev/nvidia*:/dev/nvidia*
+LABEL com.nvidia.volumes.needed=nvidia_driver
+
+# Set up some paths so we can find the nvidia driver bins/libs
+ENV PATH=/usr/local/nvidia/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENV LD_LIBRARY_PATH=/usr/local/nvidia/lib:/usr/local/nvidia/lib64
+
+# Uninstall the NVML stub library in favor of the real one we mount in
+RUN rm -rf /opt/nvidia-gdk && \
+    rm -rf /etc/ld.so.conf.d/nvidia-lib64.conf && \
+    ldconfig
+
+ENTRYPOINT ["mesos-agent", \
+            "--master=zk://localhost:2181/mesos", \
+            "--launcher=posix", \
+            "--containerizers=mesos", \
+            "--isolation=cgroups/devices/gpus/nvidia", \
+            "--log_dir=/var/log/mesos", \
+            "--no-systemd_enable_support"]
