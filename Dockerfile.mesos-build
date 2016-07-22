@@ -1,13 +1,9 @@
 FROM mesos-base
 MAINTAINER Kevin Klues <klueska@mesosphere.com>
 
-RUN support/install-nvidia-gdk.sh --update-ldcache
-
 RUN rm -rf build && \
     mkdir -p build && \
     ./bootstrap && \
     cd build && \
-    ../configure --enable-nvidia-gpu-support \
-                 --with-nvml-include=/opt/nvidia-gdk/usr/include \
-                 --with-nvml-lib=/opt/nvidia-gdk/usr/src/gdk/nvml/lib && \
+    ../configure && \
     make -j install
