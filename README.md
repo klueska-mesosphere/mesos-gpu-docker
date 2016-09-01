@@ -1,6 +1,6 @@
 # Getting Started
 
-Clone this repo on an Nvidia GPU equipped machine with at least 1 GPU
+Clone this repo on an Nvidia GPU equipped machine with at least 2 GPUs
 (g2.8xlarge instances will do nicely).
 
 Then run:
