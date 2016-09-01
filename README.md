@@ -1,29 +1,38 @@
 # Getting Started
 
-Clone this repo on an Nvidia GPU equipped machine with at least 2 GPUs
+Clone this repo on an Nvidia GPU equipped machine with at least 1 GPU
 (g2.8xlarge instances will do nicely).
 
 Then run:
 
     ./build.sh
     ./run.sh
-    ./deploy-task.sh
+    ./deploy-tasks.sh
 
-Navigate to marathon UI:
+This will launch 2 marathon applications. The first application runs
+`nvidia-smi` every 60 seconds without a docker container, and the second one
+runs `nvidia-smi` every 60 seconds inside an `nvidia/cuda` container.
+
+1. Set up port forwarding in case your are running docker on a remote machine
+   and want to browse all of the output locally:
+
+   ssh -NT -L 8080:localhost:8080 -L 5050:localhost:5050 -L 5051:localhost:5051 <remote-ip>
+
+2. Navigate to marathon UI:
 
     http://<your-ip>:8080
 
-Verify that the task is running.
+Verify that the tasks are running.
 
-Go to the Mesos UI and look at the `stdout` of the task:
+3. Go to the Mesos UI and look at the `stdout` of the tasks:
 
     http://<your-ip>:5050
 
-If it says the following, you've got problems:
+4. If they say the following, you've got problems:
 
     Failed to initialize NVML: Unknown Error
 
-If it prints something, like the following, you are good to go:
+If they print something, like the following, you are good to go:
 
     +------------------------------------------------------+                       
     | NVIDIA-SMI 352.79     Driver Version: 352.79         |                       
@@ -32,16 +41,7 @@ If it prints something, like the following, you are good to go:
     | Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
     |===============================+======================+======================|
     |   0  Tesla M60           Off  | 0000:04:00.0     Off |                    0 |
-    | N/A   32C    P8    14W / 150W |     34MiB /  7679MiB |      0%      Default |
-    +-------------------------------+----------------------+----------------------+
-    |   1  Tesla M60           Off  | 0000:05:00.0     Off |                    0 |
-    | N/A   32C    P8    13W / 150W |     34MiB /  7679MiB |      0%      Default |
-    +-------------------------------+----------------------+----------------------+
-    |   2  Tesla M60           Off  | 0000:83:00.0     Off |                    0 |
-    | N/A   36C    P8    14W / 150W |     34MiB /  7679MiB |      0%      Default |
-    +-------------------------------+----------------------+----------------------+
-    |   3  Tesla M60           Off  | 0000:84:00.0     Off |                    0 |
-    | N/A   32C    P8    13W / 150W |     34MiB /  7679MiB |      0%      Default |
+    | N/A   31C    P8    14W / 150W |     34MiB /  7679MiB |      0%      Default |
     +-------------------------------+----------------------+----------------------+
                                                                                    
     +-----------------------------------------------------------------------------+
@@ -50,4 +50,3 @@ If it prints something, like the following, you are good to go:
     |=============================================================================|
     |  No running processes found                                                 |
     +-----------------------------------------------------------------------------+
-
